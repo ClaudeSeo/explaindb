@@ -441,7 +441,7 @@ export async function run(config: ResolvedConfig): Promise<number> {
     if (config.pruneRemovedCollections === 'off' && existingDescriptions) {
       const currentCollectionNames = new Set(schemas.map((s) => s.name));
 
-      for (const [collName, collData] of existingDescriptions.collections) {
+      for (const [collName] of existingDescriptions.collections) {
         if (!currentCollectionNames.has(collName)) {
           logger.info(`Preserving removed collection: ${collName}`);
 

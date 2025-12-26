@@ -179,7 +179,9 @@ describe('renderCollection', () => {
     const result = renderCollection(mockSchema);
 
     expect(result).toContain('## Fields');
-    expect(result).toContain('| Path | Present% | Types | Optional | Examples | Description | Notes |');
+    expect(result).toContain('<table>');
+    // Path 헤더는 maxDepth에 따라 colspan이 적용됨
+    expect(result).toMatch(/<th colspan="\d+">Path<\/th>/);
     expect(result).toContain('_id');
     expect(result).toContain('email');
   });

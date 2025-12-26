@@ -1,58 +1,9 @@
-import type { BsonType } from '../../types/bson';
 import type { CollectionSchema, FieldSchema, IndexInfo, Variant } from '../../types/schema';
-import { stableSort } from '../../utils/sort';
 import { formatTableCell } from './utils';
+import { renderFieldsHtmlTable } from '../html';
 
 // 렌더링 표시 제한 상수
-const MAX_EXAMPLES_DISPLAY = 3;
 const MAX_DIFF_ITEMS_DISPLAY = 3;
-
-/**
- * 타입 비율 표시용 포맷팅
- */
-function formatTypeRatio(typeRatio: Partial<Record<BsonType, number>>): string {
-  const entries = Object.entries(typeRatio) as [BsonType, number][];
-  if (entries.length === 0) return '-';
-  if (entries.length === 1) return entries[0][0];
-
-  return entries
-    .sort((a, b) => b[1] - a[1])
-    .map(([type, ratio]) => `${type}(${Math.round(ratio * 100)}%)`)
-    .join(', ');
-}
-
-/**
- * 예제 표시용 포맷팅
- */
-function formatExamples(field: FieldSchema): string {
-  if (field.examples.length === 0) return '-';
-
-  return field.examples
-    .slice(0, MAX_EXAMPLES_DISPLAY)
-    .map((e) => `\`${formatTableCell(e.value)}\``)
-    .join(', ');
-}
-
-/**
- * 필드 노트 포맷팅
- */
-function formatNotes(field: FieldSchema): string {
-  const notes: string[] = [];
-
-  if (field.mixedType) {
-    notes.push('Mixed');
-  }
-
-  if (field.hints.length > 0) {
-    notes.push(`PII: ${field.hints.join(', ')}`);
-  }
-
-  if (field.stats) {
-    notes.push(`min: ${field.stats.min.toFixed(2)}, max: ${field.stats.max.toFixed(2)}`);
-  }
-
-  return notes.length > 0 ? notes.join(' | ') : '-';
-}
 
 /**
  * 필드 테이블 렌더링
@@ -62,22 +13,7 @@ function renderFieldsTable(fields: FieldSchema[]): string[] {
 
   lines.push('## Fields');
   lines.push('');
-  lines.push('| Path | Present% | Types | Optional | Examples | Description | Notes |');
-  lines.push('|------|----------|-------|----------|----------|-------------|-------|');
-
-  // 경로별 필드 정렬
-  const sortedFields = stableSort(fields, (f) => f.path);
-
-  for (const field of sortedFields) {
-    const presentPct = `${Math.round(field.presentRatio * 100)}%`;
-    const types = formatTypeRatio(field.typeRatio);
-    const optional = field.optional ? 'Yes' : 'No';
-    const examples = formatExamples(field);
-    const description = formatTableCell(field.description || '-');
-    const notes = formatTableCell(formatNotes(field));
-
-    lines.push(`| ${formatTableCell(field.path)} | ${presentPct} | ${types} | ${optional} | ${examples} | ${description} | ${notes} |`);
-  }
+  lines.push(...renderFieldsHtmlTable(fields));
   lines.push('');
 
   return lines;
