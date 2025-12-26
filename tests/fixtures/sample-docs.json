@@ -1,0 +1,130 @@
+{
+  "basicTypes": [
+    {
+      "_id": "507f1f77bcf86cd799439011",
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "age": 30,
+      "active": true,
+      "score": 95.5,
+      "createdAt": "2024-01-15T10:30:00Z"
+    },
+    {
+      "_id": "507f1f77bcf86cd799439012",
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com",
+      "age": 25,
+      "active": false,
+      "score": 88.0,
+      "createdAt": "2024-01-16T11:00:00Z"
+    }
+  ],
+  "nestedObjects": [
+    {
+      "_id": "507f1f77bcf86cd799439021",
+      "user": {
+        "profile": {
+          "name": "Alice",
+          "avatar": "https://example.com/alice.jpg"
+        },
+        "settings": {
+          "theme": "dark",
+          "notifications": true
+        }
+      }
+    },
+    {
+      "_id": "507f1f77bcf86cd799439022",
+      "user": {
+        "profile": {
+          "name": "Bob"
+        },
+        "settings": {
+          "theme": "light"
+        }
+      }
+    }
+  ],
+  "arrays": [
+    {
+      "_id": "507f1f77bcf86cd799439031",
+      "tags": ["mongodb", "schema", "cli"],
+      "scores": [95, 88, 92],
+      "items": [
+        { "name": "item1", "qty": 10 },
+        { "name": "item2", "qty": 5 }
+      ]
+    },
+    {
+      "_id": "507f1f77bcf86cd799439032",
+      "tags": ["database"],
+      "scores": [100],
+      "items": []
+    }
+  ],
+  "mixedTypes": [
+    {
+      "_id": "507f1f77bcf86cd799439041",
+      "value": "string value",
+      "count": 10
+    },
+    {
+      "_id": "507f1f77bcf86cd799439042",
+      "value": 12345,
+      "count": "twenty"
+    },
+    {
+      "_id": "507f1f77bcf86cd799439043",
+      "value": null,
+      "count": null
+    }
+  ],
+  "optionalFields": [
+    {
+      "_id": "507f1f77bcf86cd799439051",
+      "required": "always present",
+      "optional1": "sometimes",
+      "optional2": "rare"
+    },
+    {
+      "_id": "507f1f77bcf86cd799439052",
+      "required": "always present",
+      "optional1": "sometimes"
+    },
+    {
+      "_id": "507f1f77bcf86cd799439053",
+      "required": "always present"
+    }
+  ],
+  "piiFields": [
+    {
+      "_id": "507f1f77bcf86cd799439061",
+      "email": "test@example.com",
+      "phone": "+1-555-123-4567",
+      "password": "hashed_password_123",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+      "ssn": "123-45-6789",
+      "creditCard": "4111111111111111"
+    }
+  ],
+  "variants": [
+    {
+      "_id": "507f1f77bcf86cd799439071",
+      "type": "user",
+      "name": "User 1",
+      "email": "user1@example.com"
+    },
+    {
+      "_id": "507f1f77bcf86cd799439072",
+      "type": "admin",
+      "name": "Admin 1",
+      "email": "admin1@example.com",
+      "permissions": ["read", "write", "delete"]
+    },
+    {
+      "_id": "507f1f77bcf86cd799439073",
+      "type": "guest",
+      "sessionId": "abc123"
+    }
+  ]
+}

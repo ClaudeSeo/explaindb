@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(dev-toolkit:typescript-dev-guidelines)",
+      "Skill(dev-toolkit:backend-common-guidelines)",
+      "Skill(dev-toolkit:code-review)",
+      "mcp__plugin_dev-toolkit_context7__resolve-library-id",
+      "Bash(bun test:*)",
+      "Bash(ls:*)",
+      "mcp__atlassian__confluence_get_page_children",
+      "mcp__atlassian__confluence_get_page"
+    ]
+  }
+}

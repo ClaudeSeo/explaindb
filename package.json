@@ -1,0 +1,36 @@
+{
+  "name": "explaindb",
+  "module": "src/index.ts",
+  "type": "module",
+  "license": "MIT",
+  "version": "0.0.1",
+  "scripts": {
+    "lint": "eslint",
+    "lint:fix": "eslint --fix .",
+    "start": "bun src/index.ts run",
+    "build": "bun build --compile --minify src/index.ts --outfile dist/explaindb",
+    "build:all": "bun run build:macos && bun run build:linux && bun run build:windows",
+    "build:macos": "bun build --compile --minify --target=bun-darwin-arm64 src/index.ts --outfile dist/explaindb-macos",
+    "build:linux": "bun build --compile --minify --target=bun-linux-x64 src/index.ts --outfile dist/explaindb-linux",
+    "build:windows": "bun build --compile --minify --target=bun-windows-x64 src/index.ts --outfile dist/explaindb.exe"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/bun": "latest",
+    "eslint": "^9.39.2",
+    "globals": "^16.5.0",
+    "jiti": "^2.6.1",
+    "prettier": "^3.7.4",
+    "typescript-eslint": "^8.50.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.958.0",
+    "commander": "^14.0.2",
+    "minimatch": "^10.1.1",
+    "mongodb": "^7.0.0",
+    "zod": "^4.2.1"
+  }
+}
