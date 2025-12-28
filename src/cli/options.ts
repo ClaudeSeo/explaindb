@@ -5,8 +5,8 @@ import {
   type CLIOptions,
   type ResolvedConfig,
 } from "../types/config";
+import pkg from "../../package.json";
 
-// 옵션 파싱 헬퍼 함수
 function parseIntOption(value: string | undefined): number | undefined {
   return value ? parseInt(value, 10) : undefined;
 }
@@ -16,7 +16,7 @@ function parseFloatOption(value: string | undefined): number | undefined {
 }
 
 /**
- * CLI 옵션 파싱 및 환경변수 병합
+ * Parse CLI options and merge with environment variables
  */
 export function parseOptions(argv: string[]): CLIOptions {
   const program = new Command();
@@ -24,54 +24,44 @@ export function parseOptions(argv: string[]): CLIOptions {
   program
     .name("explaindb")
     .description(
-      "MongoDB Observed Schema CLI - 실제 문서를 샘플링하여 스키마를 추론하고 문서화합니다"
+      "Sample MongoDB documents to infer schema and generate documentation"
     )
-    .version("1.0.0");
+    .version(pkg.version)
+    .showHelpAfterError(true);
 
   program
-    .command("run")
-    .description("스키마 문서 생성")
-    // 연결 설정
-    .option("--uri <uri>", "MongoDB 연결 URI")
-    .option("--db <db>", "대상 데이터베이스 이름")
-    // 출력 설정
-    .option("--out <dir>", "출력 디렉토리", "./out")
-    // 컬렉션 필터링
-    .option("--include <pattern>", "포함할 컬렉션 패턴 (glob)")
-    .option("--exclude <pattern>", "제외할 컬렉션 패턴 (glob)")
-    // 샘플링 설정
-    .option("--sample-size <n>", "컬렉션당 샘플 문서 수", "100")
-    .option("--time-field <field>", "시간 기반 샘플링 필드")
-    .option("--time-window <days>", "시간 윈도우 (일)")
-    .option("--match <json>", "MongoDB match 필터 (JSON)")
-    .option("--sampling-strict", "샘플링 실패 시 에러 발생", false)
-    // 평탄화 제한
-    .option("--max-depth <n>", "최대 중첩 깊이", "20")
-    .option("--max-keys-per-doc <n>", "문서당 최대 키 수", "2000")
-    .option("--max-array-sample <n>", "배열 샘플 최대 수", "50")
-    // 추론 설정
-    .option("--optional-threshold <n>", "Optional 필드 기준 비율", "0.95")
-    .option("--examples-per-type <n>", "타입당 예시 수", "3")
-    .option("--variant-top <n>", "Top N 변종 표시", "10")
-    // 마스킹 설정
-    .option("--redact <all|pii|off>", "마스킹 레벨 (all: 전부, pii: PII만, off: 없음)", "pii")
-    .option("--redact-mode <strict|balanced>", "마스킹 모드", "balanced")
-    .option("--pii-patterns <patterns>", "커스텀 PII 패턴 (쉼표 구분, 예: kakao.*,social.*)")
-    // LLM 설정
-    .option("--llm <on|off>", "LLM 문서화 활성화", "off")
-    .option("--llm-provider <provider>", "LLM 프로바이더", "bedrock")
-    .option("--llm-model <model>", "LLM 모델")
-    .option("--llm-region <region>", "LLM 리전")
-    .option("--llm-cache <on|off>", "LLM 캐시 활성화", "on")
-    .option("--llm-max-fields <n>", "LLM 처리 최대 필드 수")
-    // 동시성 설정
-    .option("--concurrency <n>", "동시 처리 수 (DB 스캔, LLM 호출)", "5")
-    // 증분 모드 설정
-    .option("--incremental <on|off>", "증분 모드", "on")
-    .option("--force", "전체 재생성 강제", false)
-    .option("--prune-removed-collections <on|off>", "삭제된 컬렉션 정리", "on")
-    // 로깅 설정
-    .option("--verbose", "상세 로깅", false);
+    .command("run", { isDefault: true })
+    .description("Generate schema documentation")
+    .option("--uri <uri>", "MongoDB connection URI")
+    .option("--db <db>", "Target database name")
+    .option("--out <dir>", "Output directory", "./out")
+    .option("--include <pattern>", "Collection pattern to include (glob)")
+    .option("--exclude <pattern>", "Collection pattern to exclude (glob)")
+    .option("--sample-size <n>", "Sample documents per collection", "100")
+    .option("--time-field <field>", "Field for time-based sampling")
+    .option("--time-window <days>", "Time window in days")
+    .option("--match <json>", "MongoDB match filter (JSON)")
+    .option("--sampling-strict", "Throw error on sampling failure", false)
+    .option("--max-depth <n>", "Maximum nesting depth", "20")
+    .option("--max-keys-per-doc <n>", "Maximum keys per document", "2000")
+    .option("--max-array-sample <n>", "Maximum array elements to sample", "50")
+    .option("--optional-threshold <n>", "Threshold ratio for optional fields", "0.95")
+    .option("--examples-per-type <n>", "Examples per type", "3")
+    .option("--variant-top <n>", "Show top N variants", "10")
+    .option("--redact <all|pii|off>", "Redaction level (all/pii/off)", "pii")
+    .option("--redact-mode <strict|balanced>", "Redaction mode", "balanced")
+    .option("--pii-patterns <patterns>", "Custom PII patterns (comma-separated)")
+    .option("--llm <on|off>", "Enable LLM documentation", "off")
+    .option("--llm-provider <provider>", "LLM provider", "bedrock")
+    .option("--llm-model <model>", "LLM model")
+    .option("--llm-region <region>", "LLM region")
+    .option("--llm-cache <on|off>", "Enable LLM cache", "on")
+    .option("--llm-max-fields <n>", "Maximum fields for LLM processing")
+    .option("--concurrency <n>", "Concurrency level", "5")
+    .option("--incremental <on|off>", "Incremental mode", "on")
+    .option("--force", "Force full regeneration", false)
+    .option("--prune-removed-collections <on|off>", "Prune removed collections", "on")
+    .option("--verbose", "Verbose logging", false);
 
   program.parse(argv);
 
@@ -82,7 +72,6 @@ export function parseOptions(argv: string[]): CLIOptions {
 
   const opts = cmd.opts();
 
-  // 문자열 숫자를 실제 숫자로 변환
   const rawOptions = {
     uri: opts.uri,
     db: opts.db,
@@ -116,7 +105,6 @@ export function parseOptions(argv: string[]): CLIOptions {
     verbose: opts.verbose,
   };
 
-  // undefined 값 제거
   const filteredOptions = Object.fromEntries(
     Object.entries(rawOptions).filter(([, v]) => v !== undefined)
   );
@@ -125,8 +113,8 @@ export function parseOptions(argv: string[]): CLIOptions {
 }
 
 /**
- * CLI 옵션과 환경변수를 병합하여 설정 해결
- * CLI 인자가 환경변수보다 우선순위가 높음
+ * Resolve config by merging CLI options with environment variables.
+ * CLI arguments take precedence over environment variables.
  */
 export function resolveConfig(options: CLIOptions): ResolvedConfig {
   const uri = options.uri || process.env[ENV_VARS.URI];
@@ -134,13 +122,13 @@ export function resolveConfig(options: CLIOptions): ResolvedConfig {
 
   if (!uri) {
     throw new Error(
-      `필수 옵션 누락: --uri 또는 환경변수 ${ENV_VARS.URI}를 설정하세요.`
+      `Missing required option: --uri or env ${ENV_VARS.URI}`
     );
   }
 
   if (!db) {
     throw new Error(
-      `필수 옵션 누락: --db 또는 환경변수 ${ENV_VARS.DB}를 설정하세요.`
+      `Missing required option: --db or env ${ENV_VARS.DB}`
     );
   }
 
@@ -149,20 +137,4 @@ export function resolveConfig(options: CLIOptions): ResolvedConfig {
     uri,
     db,
   };
-}
-
-/**
- * CLI 커맨드 가져오기 (run, help 등)
- * commander 대신 직접 argv 파싱
- */
-export function getCommand(argv: string[]): string {
-  // argv: [bun, script.ts, command, ...options]
-  const args = argv.slice(2);
-
-  // 첫 번째 인자가 옵션이 아니면 커맨드로 인식
-  if (args.length > 0 && !args[0].startsWith("-")) {
-    return args[0];
-  }
-
-  return "help";
 }
